@@ -15,14 +15,14 @@ export class AuthService {
         //Links authentication methods to your configured client
     }
 
-    async createAccount({ email, password, name }) {
+    async createAccount({ email, password, name }){
         try {
-            const userAccount = await this.account.create(
-                userId: ID.unique(),
-                email,
-                password,
-                name
-             );
+            const userAccount = await this.account.create({
+            userId: ID.unique(),
+            email : email,
+            password: password,
+            name : name
+        });
             if(userAccount)  {
                 //another function
                 return this.login({email,password})
@@ -31,7 +31,7 @@ export class AuthService {
             
 
         } catch (error) {
-            throw error;
+            console.log("Appwrite error :: createAccount :", error);
         }
         
         
@@ -44,7 +44,7 @@ export class AuthService {
                 password : password
             })
          } catch (error) {
-            throw(error)
+             console.log("Appwrite error :: login :", error);
          }
     }
 
