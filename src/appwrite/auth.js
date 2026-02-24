@@ -5,6 +5,9 @@ import { Client, Account, ID } from "appwrite";
 
 export class AuthService {
 
+    client;
+    account; 
+
     constructor() {
         this.client = new Client();
         this.client
@@ -48,15 +51,19 @@ export class AuthService {
          }
     }
 
-    async getCurrentUser (){
-        try {
-            return  await this.account.get();
+    async getCurrentUser (){                    //check who is currently logged
+        try {                      
+            return  await this.account.get();   //It reads session internally
         } catch (error) {
-            console.log ("Appwritr error :: getCurrentUser :" + error)
-        }
-
+            console.log ("Appwritr error :: getCurrentUser :" + error) 
+        } 
         return null;
     }
+    //GetCurrentUser return -->  {
+    //  $id: "userId123",
+    //  name: "Swayam", 
+    // email: "abc@gmail.com",}
+
 
     async logout (){
         try {
@@ -66,5 +73,7 @@ export class AuthService {
         }
     }
 }
+
+
 const authService = new AuthService();
 export default authService;

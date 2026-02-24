@@ -1,12 +1,11 @@
-//import { data } from "react-router";
+// ************************* Functionalities related to Posts ******************************
+
 import conf from "../conf/conf.js";
 import { Client, Account, ID, Databases, Storage, Query, TablesDB } from "appwrite";
 
-
-
 export class Service {
     client;
-    tables;
+    tables;              // All three will be defined inside the constructor 
     bucket;
 
     constructor() {
@@ -14,17 +13,16 @@ export class Service {
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId)
             .setKey(conf.appwriteApiKey); // required for backend
-
         this.tables = new TablesDB(this.client);
-        //this.storages = new Storage(this.client)
+        this.storages = new Storage(this.client)
     }
 
     async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
             return await this.tables.createRow({
-                databaseId: conf.appwriteDatabaseId,
+                databaseId: conf.appwriteDatabaseId,    
                 tableId: conf.appwriteTableId,   // renamed
-                rowId: slug,
+                rowId: slug,                     //slug creates a unique id based on the title
                 data: {
                     title,
                     content,
@@ -41,10 +39,10 @@ export class Service {
     async updatePost(slug, { title, content, featuredImage, status, userId }) {
             try {
                 return await this.tables.updateRow({
-                    databaseId: conf.appwriteDatabaseId,
-                    tableId: conf.appwriteTableId,
-                    rowId: slug,
-                    data: {   
+                    databaseId: conf.appwriteDatabaseId,  //Databse ID
+                    tableId: conf.appwriteTableId,        //Table ID
+                    rowId: slug,                          //RowID of the row to update
+                    data: {                               //What to update
                         title,
                         content,
                         featuredImage,
@@ -60,10 +58,10 @@ export class Service {
 
     async deletePost({slug}){
         try {
-             await this.tables.deleteRow({
-                databaseId: conf.appwriteDatabaseId,
-                tableId: conf.appwriteTableId,
-                rowId: slug,
+             await this.tables.deleteRow({ 
+                databaseId: conf.appwriteDatabaseId,   //Database ID
+                tableId: conf.appwriteTableId,         //Table ID
+                rowId: slug,                           // RowID of the row to delete
             })
             return true 
         } catch (error) {
@@ -75,22 +73,22 @@ export class Service {
     async getPost ({slug}){
         try {
             return await this.tables.getRow({
-                databaseId: conf.appwriteDatabaseId,
-                tableId: conf.appwriteTableId,
-                rowId: slug,
-            })
+                databaseId: conf.appwriteDatabaseId, //DatabseID
+                tableId: conf.appwriteTableId,       //TableID
+                rowId: slug,                         // RowID of row to fetch
+            }) 
         } catch (error) {
             console.log("Appwrite error :: getPost :", error);
             return false
         }
     }
 
-    async getPosts (queryParam = [Query.equal("status", "active")]){
-        try {
+    async getPosts (queryParam = [Query.equal("status", "active")]){  
+        try {                   //Query.equal (field  ,    value)
             return await this.tables.listRows({
-                databaseId: conf.appwriteDatabaseId,
-                tableId: conf.appwriteTableId,
-                queries : queryParam,
+                databaseId: conf.appwriteDatabaseId,   //DatabseID
+                tableId: conf.appwriteTableId,         //TableID
+                queries : queryParam,                  //Query to filter the rows
                 
             })
         } catch (error) {
@@ -99,12 +97,13 @@ export class Service {
         }
     }
 
+//-------------------------> File Methods <----------------------------------
     async uploadFile(file){
         try {
             return await this.bucket.createFile({
-                bucketId : conf.appwriteBucketId,
-                fileId : ID.unique(),
-                file : file
+                bucketId : conf.appwriteBucketId,  // StorageID tell where to store
+                fileId : ID.unique(),              // unique ID for each file
+                file : file                        // actual file
             })
         } catch (error) {
             console.log("Appwrite error :: uploadFile :", error);
@@ -134,7 +133,6 @@ export class Service {
         })
     }
 }
-
 
 const service = new Service();
 export default service
