@@ -1,3 +1,5 @@
+// Appwrite Server Connections 
+
 import conf from '../conf/conf.js'
 import { Client, Account, ID } from "appwrite";
 //Client → connects your app to Appwrite server
@@ -9,13 +11,13 @@ export class AuthService {
     account; 
 
     constructor() {
-        this.client = new Client();
+        this.client = new Client();     // instance to connect the appwrite server 
         this.client
-            .setEndpoint(conf.appwriteUrl)
+            .setEndpoint(conf.appwriteUrl)       //Appwrite Server Connection/Configuration 
             .setProject(conf.appwriteProjectId);
 
-        this.account = new Account(this.client);  
-        //Links authentication methods to your configured client
+        this.account = new Account(this.client); //Links authentication methods to client
+        
     }
 
     async createAccount({ email, password, name }){
@@ -59,12 +61,11 @@ export class AuthService {
         } 
         return null;
     }
-    //GetCurrentUser return -->  {
-    //  $id: "userId123",
-    //  name: "Swayam", 
-    // email: "abc@gmail.com",}
-
-
+                    //GetCurrentUser return -->  {
+                    //  $id: "userId123",
+                    //  name: "Swayam", 
+                    // email: "abc@gmail.com",}
+                    
     async logout (){
         try {
             await this.account.deleteSessions();

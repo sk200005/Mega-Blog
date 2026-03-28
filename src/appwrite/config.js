@@ -1,4 +1,5 @@
 // ************************* Functionalities related to Posts ******************************
+// Appwrite Database Connections
 
 import conf from "../conf/conf.js";
 import { Client, Account, ID, Databases, Storage, Query, TablesDB } from "appwrite";
@@ -116,8 +117,6 @@ export class Service {
             return await this.bucket.deleteFile({
                 bucketId : conf.appwriteBucketId,
                 fileId : fileId,
-
-
             })
         } catch (error) {
             console.log("Appwrite error :: uploadFile :", error);
