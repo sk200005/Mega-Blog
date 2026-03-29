@@ -8,7 +8,7 @@ export default function LogoutBtn() {
 
   const logoutHandler = () => {
     authService.logout().then(() =>{   // first logout from main Appwrite server 
-      dispatch(logout)                 // logout in frontend state
+      dispatch(logout())               // logout in frontend state
     })
   }
   return (

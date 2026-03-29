@@ -3,17 +3,17 @@
 import React from 'react'
 
 export default function Button({
-    ButtonText,
     type = 'button',
     bgColor = 'bg-blue-600',
     textColor = 'text-white',
-    clasName = '',               
+    className = '',
+    children,
     ...props                  //represent additional properties like placeholder etc...
 
 }) {
   return (
-    <button className= {`px-4 py-2 rounded-lg ${bgColor} ${textColor} ${clasName}`} {...props}>
-        {ButtonText}
+    <button type={type} className= {`px-4 py-2 rounded-lg ${bgColor} ${textColor} ${className}`} {...props}>
+        {children}
     </button>
   )
 }

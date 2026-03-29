@@ -2,7 +2,7 @@
 // Appwrite Database Connections
 
 import conf from "../conf/conf.js";
-import { Client, Account, ID, Databases, Storage, Query, TablesDB } from "appwrite";
+import { Client, ID, Storage, Query, TablesDB } from "appwrite";
 
 export class Service {
     client;
@@ -12,10 +12,9 @@ export class Service {
     constructor() {
         this.client = new Client()
             .setEndpoint(conf.appwriteUrl)
-            .setProject(conf.appwriteProjectId)
-            .setKey(conf.appwriteApiKey); // required for backend
+            .setProject(conf.appwriteProjectId);
         this.tables = new TablesDB(this.client);
-        this.storages = new Storage(this.client)
+        this.bucket = new Storage(this.client);
     }
 
     async createPost({ title, slug, content, featuredImage, status, userId }) {
@@ -23,7 +22,7 @@ export class Service {
             return await this.tables.createRow({
                 databaseId: conf.appwriteDatabaseId,    
                 tableId: conf.appwriteTableId,   // renamed
-                rowId: slug,                     //slug creates a unique id based on the title
+                rowId: ID.unique(),              // Use a valid Appwrite row ID regardless of title length
                 data: {
                     title,
                     content,
@@ -57,7 +56,7 @@ export class Service {
             }
     }
 
-    async deletePost({slug}){
+    async deletePost(slug){
         try {
              await this.tables.deleteRow({ 
                 databaseId: conf.appwriteDatabaseId,   //Database ID
@@ -71,7 +70,7 @@ export class Service {
         }
     }
 
-    async getPost ({slug}){
+    async getPost (slug){
         try {
             return await this.tables.getRow({
                 databaseId: conf.appwriteDatabaseId, //DatabseID
@@ -80,21 +79,23 @@ export class Service {
             }) 
         } catch (error) {
             console.log("Appwrite error :: getPost :", error);
-            return false
+            return null
         }
     }
 
     async getPosts (queryParam = [Query.equal("status", "active")]){  
         try {                   //Query.equal (field  ,    value)
-            return await this.tables.listRows({
+            const response = await this.tables.listRows({
                 databaseId: conf.appwriteDatabaseId,   //DatabseID
                 tableId: conf.appwriteTableId,         //TableID
                 queries : queryParam,                  //Query to filter the rows
                 
             })
+
+            return response?.rows || response?.documents || []
         } catch (error) {
             console.log("Appwrite error :: getPosts :", error);
-            return false
+            return []
         }
     }
 
@@ -126,7 +127,9 @@ export class Service {
 
     getFilePreview(fileId)
     {
-        return this.bucket.getFilePreview({
+        if (!fileId) return "";
+
+        return this.bucket.getFileView({
             bucketId : conf.appwriteBucketId,
             fileId : fileId,
         })

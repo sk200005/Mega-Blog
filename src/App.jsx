@@ -5,8 +5,7 @@ import authService from './appwrite/auth.js'
 import { login, logout } from './store/authSlice.js';
 import Header from './components/Header/Header.jsx'
 import Footer from './components/Footer/Footer.jsx'
-import { Outlet } from 'react-router';
-import Focus from './components/Focus.jsx';
+import { Outlet } from 'react-router-dom';
 
 
 function App() {
@@ -26,7 +25,7 @@ function App() {
       else dispatch(logout())     // else logout user
     })
     .finally(() => setLoading(false))     // turn-Off loading 
-  }, [])
+  }, [dispatch])
 
 
 
@@ -36,8 +35,7 @@ function App() {
 
         <Header />
         <main>
-        TODO:  {/* <Outlet/> */}
-        <Focus/>
+          <Outlet />
         </main>
         <Footer/>
 
